@@ -1,2 +1,2 @@
 # AlphaChess
-A chess AI that is better than dhgf
+A chess AI which goal is to beat dhgf
