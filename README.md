@@ -1,2 +1,2 @@
 # AlphaChess
-A chess AI which goal is to beat dhgf
+A chess AI whose goal is to beat dhgf
