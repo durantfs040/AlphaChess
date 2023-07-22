@@ -1,6 +1,6 @@
 const ChessBoard = () => {
     return (
-        <>CHESSBOARD</>
+        <h1>CHESSBOARD</h1>
     )
 }
 
