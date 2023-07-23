@@ -1,9 +1,11 @@
-import React from 'react';
 
-const Row = ({positions}) => {
+const Row = ({rowPositions, file}) => {
     return (
-        <div style={{display: 'flex', height: '20px'}}>
-            {positions.map((position) => <div style={{border: '1px solid brown', padding: '2px'}}>{position}</div>)}
+        <div className="row">
+            {rowPositions.map((position, index) => <div className="square"
+                                                        style={{background: (file + index) % 2 === 0 ? '#fde6bf' : '#c78443'}}
+                                                        key={index}><img src={position !== '' && `/${position}.svg`}
+                                                                         className="pieceimage" width={100}/></div>)}
         </div>
     );
 };

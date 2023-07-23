@@ -5,6 +5,10 @@
     text-align: center;
 }
 
+* {
+    background-color: white;
+}
+
 .logo {
     height: 6em;
     padding: 1.5em;
@@ -41,4 +45,19 @@
 
 .read-the-docs {
     color: #888;
+}
+
+.row {
+    display: flex;
+    height: 100px;
+}
+
+.square {
+    padding: 2px;
+    width: 100px;
+    color: black;
+}
+
+.pieceimage {
+    background: transparent;
 }

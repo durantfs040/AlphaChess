@@ -1,13 +1,16 @@
 import Row from "../components/Row.jsx";
+import {startingPositions} from "../constants/index.js";
+import {useState} from "react";
+
 
 const ChessBoard = () => {
-    const positions = [['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'], ['pawn', 'pawn', 'pawn', 'pawn', 'pawn', 'pawn', 'pawn', 'pawn'], [], [],
-        [], [], ['pawn', 'pawn', 'pawn', 'pawn', 'pawn', 'pawn', 'pawn', 'pawn'], ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook']];
+    const [positions, setPositions] = useState(startingPositions);
+
     return (
         <div>
             {positions.map((position, index) => {
                 return (
-                    <Row key={index} positions={position}/>
+                    <Row key={index} rowPositions={position} file={index}/>
                 );
             })}
         </div>
