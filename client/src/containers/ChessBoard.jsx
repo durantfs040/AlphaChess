@@ -1,4 +1,4 @@
-import Row from "./Row.jsx";
+import Row from "../components/Row.jsx";
 
 const ChessBoard = () => {
     const positions = [['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'], ['pawn', 'pawn', 'pawn', 'pawn', 'pawn', 'pawn', 'pawn', 'pawn'], [], [],
