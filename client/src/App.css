@@ -58,6 +58,13 @@
     color: black;
 }
 
-.pieceimage {
+.piece {
     background: transparent;
+    height: 100%;
+}
+
+.image {
+    background: transparent;
+    width: 100%;
+    height: 100%;
 }

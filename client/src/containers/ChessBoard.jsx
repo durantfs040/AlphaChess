@@ -1,6 +1,4 @@
 import Row from "../components/Row.jsx";
-import {startingPositions} from "../constants/index.js";
-import {useState} from "react";
 import {useChess} from "../hooks/useChess.jsx";
 
 
