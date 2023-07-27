@@ -1,5 +1,6 @@
 import {createContext, useContext, useEffect, useState} from "react";
-import {startingPositions} from "../constants/index.js";
+import {startingPositions} from "../constants";
+import rules from "../rules";
 
 const ChessContext = createContext({
     positions: [],
@@ -10,29 +11,23 @@ const ChessContext = createContext({
 const ChessProvider = (props) => {
     const [positions, setPositions] = useState(startingPositions);
     const [positionFrom, setPositionFrom] = useState([]);
-    const [positionTo, setPositionTo] = useState([]);
-    const [isMoving, setIsMoving] = useState(false);
+    const [positionTo, setPositionTo] = useState([])
     const [side, setSide] = useState('white');
 
     const handleClick = (position) => {
-        if (!isMoving && !positions[position[0]][position[1]]) return;
-        if (!isMoving) {
-            setPositionTo([]);
+        if (!positionFrom.length && !positions[position[0]][position[1]]) return;
+        if (!positionFrom.length) {
             setPositionFrom(position);
-            setIsMoving(true);
             return;
         }
         if (positionFrom[0] === position[0] && positionFrom[1] === position[1]) {
             setPositionFrom([]);
-            setIsMoving(!isMoving);
             return;
         }
         setPositionTo(position);
-        setIsMoving(false);
     }
 
     const movePiece = (from, to) => {
-        if (!to.length) return;
         const newPositions = [...positions];
         newPositions[to[0]][to[1]] = positions[from[0]][from[1]];
         newPositions[from[0]][from[1]] = '';
@@ -42,12 +37,16 @@ const ChessProvider = (props) => {
 
     useEffect(() => {
         console.log(`from`, positionFrom, 'to', positionTo);
-        movePiece(positionFrom, positionTo);
+        if (!positionFrom.length || !positionTo.length) return
+        const piece = positions[positionFrom[0]][positionFrom[1]];
+        if (rules(positionFrom, positionTo, piece)) movePiece(positionFrom, positionTo);
+        setPositionFrom([]);
+        setPositionTo([]);
     }, [positionFrom, positionTo]);
 
     return (
         <ChessContext.Provider value={{
-            positions, setPositions, positionFrom, setPositionFrom, positionTo, setPositionTo, isMoving, setIsMoving,
+            positions, setPositions, positionFrom, setPositionFrom, positionTo, setPositionTo,
             handleClick, side, setSide
         }}{...props}/>
     )
