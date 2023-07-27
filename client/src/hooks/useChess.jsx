@@ -15,15 +15,19 @@ const ChessProvider = (props) => {
     const [side, setSide] = useState('white');
 
     const handleClick = (position) => {
+        // can't click on empty square
         if (!positionFrom.length && !positions[position[0]][position[1]]) return;
+        // first click
         if (!positionFrom.length) {
             setPositionFrom(position);
             return;
         }
+        // cancel if click on same square
         if (positionFrom[0] === position[0] && positionFrom[1] === position[1]) {
             setPositionFrom([]);
             return;
         }
+        // second click
         setPositionTo(position);
     }
 
@@ -36,10 +40,15 @@ const ChessProvider = (props) => {
 
 
     useEffect(() => {
-        console.log(`from`, positionFrom, 'to', positionTo);
+        // from and to positions can't be empty
         if (!positionFrom.length || !positionTo.length) return
+
         const piece = positions[positionFrom[0]][positionFrom[1]];
-        if (rules(positionFrom, positionTo, piece)) movePiece(positionFrom, positionTo);
+        const capturedPiece = positions[positionTo[0]][positionTo[1]];
+
+        // move piece if obey rules
+        if (rules(positionFrom, positionTo, piece, capturedPiece)) movePiece(positionFrom, positionTo);
+
         setPositionFrom([]);
         setPositionTo([]);
     }, [positionFrom, positionTo]);
