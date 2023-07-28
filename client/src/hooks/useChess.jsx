@@ -12,7 +12,7 @@ const ChessProvider = (props) => {
     const [positions, setPositions] = useState(startingPositions);
     const [positionFrom, setPositionFrom] = useState([]);
     const [positionTo, setPositionTo] = useState([])
-    const [side, setSide] = useState('white');
+    const [side, setSide] = useState('w');
 
     const handleClick = (position) => {
         // can't click on empty square
@@ -27,6 +27,10 @@ const ChessProvider = (props) => {
             setPositionFrom([]);
             return;
         }
+        if (positions[position[0]][position[1]][0] === positions[positionFrom[0]][positionFrom[1]][0]) {
+            setPositionFrom(position)
+            return;
+        }
         // second click
         setPositionTo(position);
     }
@@ -36,6 +40,7 @@ const ChessProvider = (props) => {
         newPositions[to[0]][to[1]] = positions[from[0]][from[1]];
         newPositions[from[0]][from[1]] = '';
         setPositions(newPositions);
+        setSide(side === 'w' ? 'b' : 'w');
     };
 
 
@@ -47,7 +52,7 @@ const ChessProvider = (props) => {
         const capturedPiece = positions[positionTo[0]][positionTo[1]];
 
         // move piece if obey rules
-        if (rules(positionFrom, positionTo, piece, capturedPiece)) movePiece(positionFrom, positionTo);
+        if (rules(positionFrom, positionTo, piece, capturedPiece, side)) movePiece(positionFrom, positionTo);
 
         setPositionFrom([]);
         setPositionTo([]);
