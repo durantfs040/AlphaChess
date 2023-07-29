@@ -1,6 +1,6 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import {startingPositions} from "../constants";
-import rules from "../rules";
+import rules, {castle} from "../rules";
 import axios from "axios";
 import {boardToFen, toNumber} from "../utils.js";
 
@@ -55,18 +55,21 @@ const ChessProvider = (props) => {
 
         // move piece if obey rules
         if (rules(positionFrom, positionTo, piece, capturedPiece, side)) movePiece(positionFrom, positionTo);
+        if (piece[1] === 'k' && Math.abs(positionFrom[1] - positionTo[1]) === 2) movePiece(...castle(positionFrom, positionTo))
 
         setPositionFrom([]);
         setPositionTo([]);
     }, [positionFrom, positionTo]);
 
     useEffect(() => {
+        console.log(positions)
         if (side === 'w') return
         const position = boardToFen(positions, side)
         axios.post('http://localhost:4000/analyze', {position}).then(res => {
             const bestMove = res.data.results.split(' ')[1]
             const {from, to} = toNumber(bestMove)
             movePiece(from, to)
+            if (positions[to[0]][to[1]][1] === 'k' && Math.abs(from[1] - to[1]) === 2) movePiece(...castle(from, to))
             setSide(side === 'w' ? 'b' : 'w')
         })
     }, [positions])

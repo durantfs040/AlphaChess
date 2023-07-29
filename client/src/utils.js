@@ -41,7 +41,6 @@ export const boardToFen = (board, side) => {
     }
 
     fen += ` ${side} KQkq - 0 1`;
-    console.log(`fen`, fen);
 
     return fen;
 }

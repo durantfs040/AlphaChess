@@ -4,6 +4,7 @@ const rules = (from, to, piece, capturedPiece, side) => {
     const isWhite = (piece[0] === 'w');
     const type = piece[1];
 
+
     switch (type) {
         case 'p':
             // move two squares forward at start
@@ -31,6 +32,11 @@ const rules = (from, to, piece, capturedPiece, side) => {
         default:
             return false;
     }
+}
+
+export const castle = (from, to) => {
+    console.log(from, to);
+    return [[from[0], (from[1] > to[1]) ? 0 : 7], [from[0], (from[1] + to[1]) / 2]]
 }
 
 export default rules
