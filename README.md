@@ -2,6 +2,11 @@
 A chess AI whose goal is to beat dhgf
 
 #### Setup
+On the client side
 ```
-cd client && npm i && npm start && cd ../server && npm i && npm run server
+npm i && npm start 
+```
+On the server side
+```
+npm i && npm run server
 ```
