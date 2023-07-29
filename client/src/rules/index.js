@@ -1,5 +1,4 @@
 const rules = (from, to, piece, capturedPiece, side) => {
-    console.log(`from`, from, `to`, to, `piece`, piece, `capturedPiece`, capturedPiece, 'side', side);
     if (piece[0] !== side) return false
 
     const isWhite = (piece[0] === 'w');

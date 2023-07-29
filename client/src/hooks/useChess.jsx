@@ -1,6 +1,8 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import {startingPositions} from "../constants";
 import rules from "../rules";
+import axios from "axios";
+import {boardToFen, toNumber} from "../utils.js";
 
 const ChessContext = createContext({
     positions: [],
@@ -57,6 +59,17 @@ const ChessProvider = (props) => {
         setPositionFrom([]);
         setPositionTo([]);
     }, [positionFrom, positionTo]);
+
+    useEffect(() => {
+        if (side === 'w') return
+        const position = boardToFen(positions, side)
+        axios.post('http://localhost:4000/analyze', {position}).then(res => {
+            const bestMove = res.data.results.split(' ')[1]
+            const {from, to} = toNumber(bestMove)
+            movePiece(from, to)
+            setSide(side === 'w' ? 'b' : 'w')
+        })
+    }, [positions])
 
     return (
         <ChessContext.Provider value={{
