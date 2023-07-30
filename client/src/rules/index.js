@@ -8,7 +8,7 @@ const rules = (from, to, piece, capturedPiece, side) => {
     switch (type) {
         case 'p':
             // move two squares forward at start
-            if (capturedPiece === '' && from[0] === 1 + 5 * isWhite && to[0] === 3 + isWhite) return true
+            if (capturedPiece === '' && from[0] === 1 + 5 * isWhite && to[0] === 3 + isWhite && from[1] === to[1]) return true
             // move one square forward
             if (capturedPiece === '') return (from[0] === to[0] - 1 + 2 * isWhite && from[1] === to[1])
             // capture pieces
