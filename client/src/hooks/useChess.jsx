@@ -2,7 +2,9 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {startingPositions} from "../constants";
 import rules, {castle} from "../rules";
 import axios from "axios";
-import {boardToFen, toNumber} from "../utils.js";
+import {boardToFen, isEqual, toNumber} from "../utils.js";
+
+// const chess = new Chess();
 
 const ChessContext = createContext({
     board: [],
@@ -15,7 +17,13 @@ const ChessProvider = (props) => {
     const [board, setBoard] = useState(startingPositions);
     const [positionFrom, setPositionFrom] = useState([]);
     const [positionTo, setPositionTo] = useState([])
+
     const [side, setSide] = useState('w');
+
+    // useEffect(() => {
+    //     console.log(chess.ascii())
+    // }, [board])
+
 
     const handleClick = (position) => {
         // can't click on empty square
@@ -26,7 +34,7 @@ const ChessProvider = (props) => {
             return;
         }
         // cancel if click on same square
-        if (positionFrom[0] === position[0] && positionFrom[1] === position[1]) {
+        if (isEqual(positionFrom, position)) {
             setPositionFrom([]);
             return;
         }
@@ -53,8 +61,12 @@ const ChessProvider = (props) => {
 
         const piece = board[positionFrom[0]][positionFrom[1]];
         const capturedPiece = board[positionTo[0]][positionTo[1]];
-
-        // move piece if obey rules
+        // try {
+        //     chess.move(toSan(positionFrom, positionTo))
+        // } catch (err) {
+        //     setPositionTo([])
+        //     return;
+        // }
         if (rules(positionFrom, positionTo, piece, capturedPiece, side)) movePiece(positionFrom, positionTo);
         if (piece[1] === 'k' && Math.abs(positionFrom[1] - positionTo[1]) === 2) movePiece(...castle(positionFrom, positionTo))
 
@@ -63,16 +75,20 @@ const ChessProvider = (props) => {
     }, [positionFrom, positionTo]);
 
     useEffect(() => {
-        console.log(board)
         if (side === 'w') return
         const position = boardToFen(board, side)
+
         axios.post('http://localhost:4000/analyze', {position}).then(res => {
             const bestMove = res.data.results.split(' ')[1]
             const {from, to} = toNumber(bestMove)
+            // chess.move(bestMove)
             movePiece(from, to)
             if (board[to[0]][to[1]][1] === 'k' && Math.abs(from[1] - to[1]) === 2) movePiece(...castle(from, to))
             setSide(side === 'w' ? 'b' : 'w')
+        }).catch((err) => {
+            console.error(err)
         })
+
     }, [board])
 
     return (

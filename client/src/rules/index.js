@@ -35,7 +35,6 @@ const rules = (from, to, piece, capturedPiece, side) => {
 }
 
 export const castle = (from, to) => {
-    console.log(from, to);
     return [[from[0], (from[1] > to[1]) ? 0 : 7], [from[0], (from[1] + to[1]) / 2]]
 }
 

@@ -1,14 +1,16 @@
 import React from 'react';
 import {useChess} from "../hooks/useChess.jsx";
+import {isEqual} from "../utils.js";
 
 const Piece = ({piece, position}) => {
-    const {handleClick} = useChess();
-    const color = piece[0] === 'w' ? 'white' : 'black';
-    const type = piece[1];
+    const {handleClick, positionFrom} = useChess();
+    const isClicked = isEqual(position, positionFrom)
 
     return (
 
-        <div className="piece" onClick={() => handleClick(position)}>
+        <div className="piece"
+             style={{background: isClicked ? '#689b5f' : (position[0] + position[1]) % 2 ? '#c78443' : '#fde6bf'}}
+             onClick={() => handleClick(position)}>
             {piece && <img className="image" src={piece !== '' && `/${piece}.svg`}/>}
         </div>
     );
