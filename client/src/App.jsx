@@ -5,6 +5,7 @@ import {useChess} from "./hooks/useChess.jsx";
 function App() {
     const {side} = useChess()
 
+
     return (
         <div>
             <div style={{color: "black"}}>

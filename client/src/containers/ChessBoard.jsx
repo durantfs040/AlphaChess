@@ -3,10 +3,11 @@ import {useChess} from "../hooks/useChess.jsx";
 
 
 const ChessBoard = () => {
-    const {positions} = useChess();
+    const {board} = useChess();
+
     return (
         <div>
-            {positions.map((position, index) => {
+            {board.map((position, index) => {
                 return (
                     <Row key={index} rowPositions={position} rank={index}/>
                 );
