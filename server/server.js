@@ -14,7 +14,7 @@ app.post('/analyze', (req, res) => {
             res.json({results});
         });
     } catch (err) {
-        res.status(404).json({message: 'illegal move'})
+        res.status(404).json({message: 'waits that\'s illegal!'})
     }
 });
 

@@ -3,8 +3,10 @@ import axios from "axios";
 import {isEqual, toSan} from "../utils.js";
 import {Chess} from "chess.js";
 
+
 const chess = new Chess();
 const startingPositions = chess.board()
+
 
 const ChessContext = createContext({
     board: [],
@@ -13,11 +15,14 @@ const ChessContext = createContext({
     side: '',
 });
 
+
 const ChessProvider = (props) => {
     const [board, setBoard] = useState(startingPositions);
     const [positionFrom, setPositionFrom] = useState([]);
     const [positionTo, setPositionTo] = useState([])
     const [side, setSide] = useState('w');
+    const [player, setPlayer] = useState('');
+
 
     const handleClick = (position) => {
         const piece = board[position[0]][position[1]]
@@ -48,6 +53,7 @@ const ChessProvider = (props) => {
         setPositionTo(position);
     }
 
+
     useEffect(() => {
         // player move
         if (!positionFrom.length || !positionTo.length) return
@@ -65,32 +71,36 @@ const ChessProvider = (props) => {
         setPositionTo([]);
     }, [positionFrom, positionTo]);
 
+
     useEffect(() => {
-        if (chess.isCheckmate()) alert('Checkmate')
+        if (chess.isCheckmate()) alert('you fucking suck')
         if (chess.isDraw()) alert('Draw')
         if (chess.isStalemate()) alert('Stalemate')
         if (chess.isThreefoldRepetition()) alert('Three-fold Repetition')
 
         // computer move
-        if (side === 'w') return
+        if (side === player || !player) return;
+
         axios.post('http://localhost:4000/analyze', {position: chess.fen()}).then(res => {
             const bestMove = res.data.results.split(' ')[1]
             chess.move(bestMove)
-
+            console.log(chess.ascii())
             setBoard(chess.board());
             setSide(side === 'w' ? 'b' : 'w')
         }).catch((err) => {
             console.error(err)
         })
-    }, [board])
+    }, [board, player])
+
 
     return (
         <ChessContext.Provider value={{
             board, setBoard, positionFrom, setPositionFrom, positionTo, setPositionTo,
-            handleClick, side, setSide
+            handleClick, side, setSide, player, setPlayer
         }}{...props}/>
     )
 }
+
 
 const useChess = () => useContext(ChessContext);
 
