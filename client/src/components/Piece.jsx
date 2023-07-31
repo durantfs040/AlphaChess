@@ -11,7 +11,7 @@ const Piece = ({piece, position}) => {
         <div className="piece"
              style={{background: isClicked ? '#689b5f' : (position[0] + position[1]) % 2 ? '#c78443' : '#fde6bf'}}
              onClick={() => handleClick(position)}>
-            {piece && <img className="image" src={piece !== '' && `/${piece}.svg`}/>}
+            {piece && <img className="image" src={`/${piece.color + piece.type}.svg`}/>}
         </div>
     );
 };
