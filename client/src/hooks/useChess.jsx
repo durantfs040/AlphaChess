@@ -21,7 +21,8 @@ const ChessProvider = (props) => {
     const [positionFrom, setPositionFrom] = useState([]);
     const [positionTo, setPositionTo] = useState([])
     const [side, setSide] = useState('w');
-    const [player, setPlayer] = useState('');
+    const [game, setGame] = useState('');
+    const [gameOver, setGameOver] = useState('No');
 
 
     const handleClick = (position) => {
@@ -53,15 +54,26 @@ const ChessProvider = (props) => {
         setPositionTo(position);
     }
 
+    const rematch = () => {
+        setGame(game === 'w' ? 'b' : 'w')
+        chess.reset()
+        setBoard(startingPositions)
+        setGameOver('No')
+        setSide('w')
+        setPositionFrom([]);
+        setPositionTo([]);
+    }
+
 
     useEffect(() => {
         // player move
         if (!positionFrom.length || !positionTo.length) return
 
         try {
-            chess.move(toSan(positionFrom, positionTo))
+            chess.move(toSan(positionFrom, positionTo));
         } catch (err) {
-            setPositionTo([])
+            setPositionFrom([]);
+            setPositionTo([]);
             return;
         }
 
@@ -73,13 +85,15 @@ const ChessProvider = (props) => {
 
 
     useEffect(() => {
-        if (chess.isCheckmate()) alert('you fucking suck')
-        if (chess.isDraw()) alert('Draw')
-        if (chess.isStalemate()) alert('Stalemate')
-        if (chess.isThreefoldRepetition()) alert('Three-fold Repetition')
+        if (chess.isCheckmate()) setGameOver('Checkmate')
+        if (chess.isDraw()) setGameOver('Draw')
+        if (chess.isStalemate()) setGameOver('Stalemate')
+        if (chess.isThreefoldRepetition()) setGameOver('Three-fold Repetition')
 
         // computer move
-        if (side === player || !player) return;
+        if (side === game || !game) return;
+        console.log(`game`, game);
+        console.log('side', side);
 
         axios.post('http://localhost:4000/analyze', {position: chess.fen()}).then(res => {
             const bestMove = res.data.results.split(' ')[1]
@@ -90,13 +104,13 @@ const ChessProvider = (props) => {
         }).catch((err) => {
             console.error(err)
         })
-    }, [board, player])
+    }, [board, game])
 
 
     return (
         <ChessContext.Provider value={{
             board, setBoard, positionFrom, setPositionFrom, positionTo, setPositionTo,
-            handleClick, side, setSide, player, setPlayer
+            handleClick, side, setSide, game, setGame, gameOver, rematch
         }}{...props}/>
     )
 }

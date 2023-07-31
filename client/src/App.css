@@ -72,6 +72,20 @@
 }
 
 .button {
-    margin: 5px;
+    margin: 5px
+}
+
+.head {
+    color: black;
+    display: flex;
+    justify-content: space-between;
+}
+
+.gameOver {
+    margin: 0 auto;
+}
+
+.rematch {
+    margin: 10px 0;
 }
 

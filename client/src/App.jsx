@@ -4,16 +4,17 @@ import {useChess} from "./hooks/useChess.jsx";
 import StartPage from "./containers/StartPage.jsx";
 
 function App() {
-    const {side, player, setPlayer} = useChess()
+    const {game, gameOver, rematch} = useChess()
 
-    if (!player) return <StartPage setPlayer={setPlayer}/>
+    if (!game) return <StartPage/>
 
     return (
         <div>
-            <div style={{color: "black"}}>
-                {`${side === "w" ? "White" : "Black"} To Move`}
+            <div className='head' style={{visibility: gameOver === 'No' ? "hidden" : "visible"}}>
+                <h1 className='gameOver'>{gameOver}</h1>
+                <button className='rematch' onClick={rematch}>Rematch</button>
             </div>
-            <ChessBoard player={player}/>
+            <ChessBoard/>
         </div>
     )
 }
