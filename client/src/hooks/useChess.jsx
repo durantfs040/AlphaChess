@@ -25,11 +25,21 @@ const ChessProvider = (props) => {
     const [gameOver, setGameOver] = useState('No');
 
 
+    const handleDrag = (e, position) => {
+        e.dataTransfer.effectAllowed = 'move';
+        const piece = board[position[0]][position[1]]
+        if (piece?.color === game) setPositionFrom(position)
+    }
+
+    const handleDrop = (position) => {
+        setPositionTo(position)
+    }
+
     const handleClick = (position) => {
         const piece = board[position[0]][position[1]]
 
         // can't click on empty square
-        if (!positionFrom.length && piece?.color !== side) return;
+        if (!positionFrom.length && piece?.color !== game) return;
         if (!positionFrom.length && !piece) return;
 
         // first click
@@ -110,7 +120,7 @@ const ChessProvider = (props) => {
     return (
         <ChessContext.Provider value={{
             board, setBoard, positionFrom, setPositionFrom, positionTo, setPositionTo,
-            handleClick, side, setSide, game, setGame, gameOver, rematch
+            handleClick, side, setSide, game, setGame, gameOver, rematch, handleDrag, handleDrop
         }}{...props}/>
     )
 }

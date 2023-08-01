@@ -49,11 +49,11 @@
 
 .row {
     display: flex;
-    height: 100px;
+    height: 120px;
 }
 
 .square {
-    width: 100px;
+    width: 120px;
 }
 
 .piece {
@@ -65,6 +65,7 @@
     background: transparent;
     width: 100%;
     height: 100%;
+    cursor: pointer;
 }
 
 .start {
@@ -72,7 +73,9 @@
 }
 
 .button {
-    margin: 5px
+    margin: 5px;
+    background: #424afd;
+    color: white;
 }
 
 .head {
@@ -87,5 +90,7 @@
 
 .rematch {
     margin: 10px 0;
+    background: #424afd;
+    color: white;
 }
 
