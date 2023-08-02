@@ -3,5 +3,9 @@ export const isEqual = (A, B) => {
 }
 
 export const toSan = (from, to) => {
-    return `${String.fromCharCode('a'.charCodeAt(0) + from[1])}${8 - from[0]}${String.fromCharCode('a'.charCodeAt(0) + to[1])}${8 - to[0]}`
+    return {
+        from: `${String.fromCharCode('a'.charCodeAt(0) + from[1])}${8 - from[0]}`,
+        to: `${String.fromCharCode('a'.charCodeAt(0) + to[1])}${8 - to[0]}`,
+        promotion: 'q'
+    }
 }

@@ -10,8 +10,8 @@ function App() {
 
     return (
         <div>
-            <div className='head' style={{visibility: gameOver === 'No' ? "hidden" : "visible"}}>
-                <h1 className='gameOver'>{gameOver}</h1>
+            <div className='head'>
+                <h1 className='gameOver' style={{visibility: gameOver === 'No' ? "hidden" : "visible"}}>{gameOver}</h1>
                 <button className='rematch' onClick={rematch}>Rematch</button>
             </div>
             <ChessBoard/>

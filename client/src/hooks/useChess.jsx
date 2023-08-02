@@ -35,6 +35,12 @@ const ChessProvider = (props) => {
         setPositionTo(position)
     }
 
+    const playSound = (name) => {
+        const audio = new Audio(`${name}.mp3`);
+        audio.play();
+    };
+
+
     const handleClick = (position) => {
         const piece = board[position[0]][position[1]]
 
@@ -80,7 +86,8 @@ const ChessProvider = (props) => {
         if (!positionFrom.length || !positionTo.length) return
 
         try {
-            chess.move(toSan(positionFrom, positionTo));
+            const move = chess.move(toSan(positionFrom, positionTo));
+            chess.isCheck() ? playSound('check') : move.captured ? playSound('capture') : playSound('move')
         } catch (err) {
             setPositionFrom([]);
             setPositionTo([]);
@@ -95,20 +102,21 @@ const ChessProvider = (props) => {
 
 
     useEffect(() => {
-        if (chess.isCheckmate()) setGameOver('Checkmate')
-        if (chess.isDraw()) setGameOver('Draw')
-        if (chess.isStalemate()) setGameOver('Stalemate')
-        if (chess.isThreefoldRepetition()) setGameOver('Three-fold Repetition')
+        if (chess.isCheckmate()) {
+            setGameOver('Checkmate')
+            playSound('checkmate')
+        }
+        if (chess.isDraw() || chess.isStalemate() || chess.isThreefoldRepetition()) setGameOver('Draw')
 
         // computer move
+        if (gameOver !== 'No') return;
         if (side === game || !game) return;
-        console.log(`game`, game);
-        console.log('side', side);
-
         axios.post('http://localhost:4000/analyze', {position: chess.fen()}).then(res => {
             const bestMove = res.data.results.split(' ')[1]
-            chess.move(bestMove)
-            console.log(chess.ascii())
+
+            const move = chess.move(bestMove)
+            chess.isCheck() ? playSound('check') : move.captured ? playSound('capture') : playSound('move')
+
             setBoard(chess.board());
             setSide(side === 'w' ? 'b' : 'w')
         }).catch((err) => {
