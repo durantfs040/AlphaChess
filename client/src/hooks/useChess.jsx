@@ -80,6 +80,10 @@ const ChessProvider = (props) => {
         setPositionTo([]);
     }
 
+    useEffect(() => {
+        game !== '' && playSound('start')
+    }, [game])
+
 
     useEffect(() => {
         // player move

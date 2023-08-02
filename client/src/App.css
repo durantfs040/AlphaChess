@@ -1,7 +1,6 @@
 #root {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 2rem;
     text-align: center;
 }
 
@@ -49,11 +48,25 @@
 
 .row {
     display: flex;
-    height: 120px;
+    height: 10vh;
 }
 
 .square {
-    width: 120px;
+    width: 10vh;
+}
+
+@media only screen and (max-width: 600px) {
+    .row {
+        height: 12.5vw;
+    }
+
+    .square {
+        width: 12.5vw;
+    }
+
+    #root {
+        width: 100%;
+    }
 }
 
 .piece {
