@@ -31,6 +31,7 @@ const Piece = ({piece, position}) => {
                         handleDrag(e, position)
                         setDrag(true)
                     }}
+                    onDragEnd={() => setDrag(false)}
                     className="image"
                     src={`/${piece.color + piece.type}.svg`}
                     alt={`${piece.color} ${piece.type}`}

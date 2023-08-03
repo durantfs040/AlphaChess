@@ -35,8 +35,8 @@ const ChessProvider = (props) => {
 
     const handleDrag = (e, position) => {
         e.dataTransfer.effectAllowed = 'move';
-        const piece = board[position[0]][position[1]]
-        if (piece?.color === game) setPositionFrom(position)
+        const piece = board[position[0]][position[1]];
+        (piece?.color === game) && setPositionFrom(position);
     }
 
     const handleDrop = (position) => {
