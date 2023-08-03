@@ -12,6 +12,7 @@ const ChessContext = createContext({
     board: [],
     positionFrom: [],
     positionTo: [],
+    history: [],
     side: '',
 });
 
@@ -20,9 +21,16 @@ const ChessProvider = (props) => {
     const [board, setBoard] = useState(startingPositions);
     const [positionFrom, setPositionFrom] = useState([]);
     const [positionTo, setPositionTo] = useState([])
+    const [history, setHistory] = useState([]);
     const [side, setSide] = useState('w');
     const [game, setGame] = useState('');
     const [gameOver, setGameOver] = useState('No');
+
+
+    const playSound = (name) => {
+        const audio = new Audio(`${name}.mp3`);
+        audio.play();
+    };
 
 
     const handleDrag = (e, position) => {
@@ -32,13 +40,8 @@ const ChessProvider = (props) => {
     }
 
     const handleDrop = (position) => {
-        setPositionTo(position)
+        positionFrom.length && setPositionTo(position)
     }
-
-    const playSound = (name) => {
-        const audio = new Audio(`${name}.mp3`);
-        audio.play();
-    };
 
 
     const handleClick = (position) => {
@@ -70,15 +73,39 @@ const ChessProvider = (props) => {
         setPositionTo(position);
     }
 
+
     const rematch = () => {
-        setGame(game === 'w' ? 'b' : 'w')
         chess.reset()
+
+        setGame(game === 'w' ? 'b' : 'w')
         setBoard(startingPositions)
         setGameOver('No')
         setSide('w')
         setPositionFrom([]);
         setPositionTo([]);
+        setHistory([])
     }
+
+
+    const handleRevert = () => {
+        if (!history.length) return;
+        playSound('move')
+        if (history.length === 1) {
+            setBoard(startingPositions)
+            chess.reset()
+            setHistory([])
+            return
+        }
+
+        setBoard(history[history.length - 2].board)
+        chess.load(history[history.length - 2].fen)
+
+        const newHistory = history
+        newHistory.pop()
+        setHistory(newHistory)
+        setGameOver('No')
+    }
+
 
     useEffect(() => {
         game !== '' && playSound('start')
@@ -88,7 +115,6 @@ const ChessProvider = (props) => {
     useEffect(() => {
         // player move
         if (!positionFrom.length || !positionTo.length) return
-
         try {
             const move = chess.move(toSan(positionFrom, positionTo));
             chess.isCheck() ? playSound('check') : move.captured ? playSound('capture') : playSound('move')
@@ -99,6 +125,7 @@ const ChessProvider = (props) => {
         }
 
         setBoard(chess.board());
+        setHistory((prev) => [...prev, {board: chess.board(), fen: chess.fen()}])
         setSide(side === 'w' ? 'b' : 'w')
         setPositionFrom([]);
         setPositionTo([]);
@@ -110,17 +137,20 @@ const ChessProvider = (props) => {
             setGameOver('Checkmate')
             playSound('checkmate')
         }
+
         if (chess.isDraw() || chess.isStalemate() || chess.isThreefoldRepetition()) setGameOver('Draw')
 
         // computer move
         if (gameOver !== 'No') return;
         if (side === game || !game) return;
+
         axios.post('http://localhost:4000/analyze', {position: chess.fen()}).then(res => {
             const bestMove = res.data.results.split(' ')[1]
 
             const move = chess.move(bestMove)
             chess.isCheck() ? playSound('check') : move.captured ? playSound('capture') : playSound('move')
 
+            setHistory((prev) => [...prev, {board: chess.board(), fen: chess.fen()}])
             setBoard(chess.board());
             setSide(side === 'w' ? 'b' : 'w')
         }).catch((err) => {
@@ -132,7 +162,7 @@ const ChessProvider = (props) => {
     return (
         <ChessContext.Provider value={{
             board, setBoard, positionFrom, setPositionFrom, positionTo, setPositionTo,
-            handleClick, side, setSide, game, setGame, gameOver, rematch, handleDrag, handleDrop
+            handleClick, side, setSide, game, setGame, gameOver, rematch, handleDrop, handleDrag, handleRevert,
         }}{...props}/>
     )
 }

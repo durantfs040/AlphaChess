@@ -13,7 +13,7 @@ const Piece = ({piece, position}) => {
     const [drag, setDrag] = useState(false);
 
     useEffect(() => {
-        setDrag(false);
+        setDrag(false)
     }, [positionTo])
 
 
