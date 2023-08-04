@@ -6,6 +6,7 @@ import {Chess} from "chess.js";
 
 const chess = new Chess();
 const startingPositions = chess.board()
+const startingFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 
 
 const ChessContext = createContext({
@@ -21,7 +22,7 @@ const ChessProvider = (props) => {
     const [board, setBoard] = useState(startingPositions);
     const [positionFrom, setPositionFrom] = useState([]);
     const [positionTo, setPositionTo] = useState([])
-    const [history, setHistory] = useState([]);
+    const [history, setHistory] = useState([{board: startingPositions, fen: startingFen}]);
     const [side, setSide] = useState('w');
     const [game, setGame] = useState('');
     const [gameOver, setGameOver] = useState('No');
@@ -83,25 +84,21 @@ const ChessProvider = (props) => {
         setSide('w')
         setPositionFrom([]);
         setPositionTo([]);
-        setHistory([])
+        setHistory([{board: startingPositions, fen: startingFen}])
     }
 
 
     const handleRevert = () => {
-        if (!history.length) return;
+        if (history.length === (1 + (game === 'b'))) return;
+
         playSound('move')
-        if (history.length === 1) {
-            setBoard(startingPositions)
-            chess.reset()
-            setHistory([])
-            return
-        }
 
-        setBoard(history[history.length - 2].board)
-        chess.load(history[history.length - 2].fen)
+        setBoard(history[history.length - history.length % 2 - 2 - (game === 'b')].board)
+        chess.load(history[history.length - history.length % 2 - 2 - (game === 'b')].fen)
 
-        const newHistory = history
-        newHistory.pop()
+        let newHistory = history
+        newHistory = newHistory.slice(0, history.length - history.length % 2 - 1 - (game === 'b'))
+
         setHistory(newHistory)
         setGameOver('No')
     }
