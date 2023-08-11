@@ -101,6 +101,7 @@ const ChessProvider = (props) => {
 
         setHistory(newHistory)
         setGameOver('No')
+        setSide(game)
     }
 
 
@@ -140,7 +141,6 @@ const ChessProvider = (props) => {
         // computer move
         if (gameOver !== 'No') return;
         if (side === game || !game) return;
-
         axios.post('http://localhost:4000/analyze', {position: chess.fen()}).then(res => {
             const bestMove = res.data.results.split(' ')[1]
 
@@ -151,7 +151,7 @@ const ChessProvider = (props) => {
             setBoard(chess.board());
             setSide(side === 'w' ? 'b' : 'w')
         }).catch((err) => {
-            console.error(err)
+            console.error(err) // remove in production
         })
     }, [board, game])
 

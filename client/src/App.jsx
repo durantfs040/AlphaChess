@@ -31,6 +31,7 @@ function App() {
                 <button className='rematch' onClick={handleRevert}><ArrowBackIosOutlinedIcon
                     sx={{background: '#424afd'}}/></button>
             </div>
+            {/* todo: implement forward button and functionality */}
         </div>
     )
 }
