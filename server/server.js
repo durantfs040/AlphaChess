@@ -7,6 +7,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get('/', (req, res) => {
+    res.json('ok');
+})
+
 app.post('/analyze', (req, res) => {
     const position = req.body.position;
     try {
