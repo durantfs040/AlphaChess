@@ -1,6 +1,9 @@
 var Index;
 var engine;
 
+const dotenv = require('dotenv');
+dotenv.config();
+
 try {
     var INIT_ENGINE = require("./stockfish-nnue-16.js");
     var wasmPath = require("path").join(__dirname, "stockfish-nnue-16.wasm");
@@ -24,7 +27,7 @@ try {
 
 
 function analyzePosition(position, callback) {
-    const depth = 20;
+    const depth = process.env.NODE_ENV === 'development' ? 20 : 10;
 
     function send(str) {
         console.log("Sending: " + str);

@@ -3,7 +3,7 @@ import axios from "axios";
 import {isEqual, toSan} from "../utils.js";
 import {Chess} from "chess.js";
 
-const serverUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:4000' : 'https://stockfish-server.vercel.app'
+const serverUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:4000' : 'https://stockfish-server.onrender.com'
 const chess = new Chess();
 const startingPositions = chess.board()
 const startingFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
