@@ -27,7 +27,7 @@ try {
 
 
 function analyzePosition(position, callback) {
-    const depth = process.env.NODE_ENV === 'development' ? 20 : 10;
+    const depth = process.env.NODE_ENV === 'development' ? 20 : 13;
 
     function send(str) {
         console.log("Sending: " + str);
