@@ -3,11 +3,10 @@ import axios from "axios";
 import {isEqual, toSan} from "../utils.js";
 import {Chess} from "chess.js";
 
-
+const serverUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:4000' : 'https://stockfish-server.vercel.app'
 const chess = new Chess();
 const startingPositions = chess.board()
 const startingFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-
 
 const ChessContext = createContext({
     board: [],
@@ -141,7 +140,7 @@ const ChessProvider = (props) => {
         if (gameOver !== 'No') return;
         if (side === game || !game) return;
 
-        axios.post('http://localhost:4000/analyze', {position: chess.fen()}).then(res => {
+        axios.post(`${serverUrl}/analyze`, {position: chess.fen()}).then(res => {
             const bestMove = res.data.results.split(' ')[1]
 
             const move = chess.move(bestMove)
