@@ -47,12 +47,29 @@
 }
 
 .row {
+    position: relative;
     display: flex;
     height: 10vh;
 }
 
 .square {
     width: 10vh;
+}
+
+.piece::before {
+    content: " ";
+    position: absolute;
+    width: 3vh;
+    height: 3vh;
+    background-color: black;
+    border-radius: 50%;
+    display: none;
+    transform: translate(116%, 116%);
+    opacity: 20%;
+}
+
+.piece.show-dot::before {
+    display: block;
 }
 
 @media only screen and (max-width: 600px) {

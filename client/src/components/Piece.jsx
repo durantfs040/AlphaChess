@@ -8,7 +8,7 @@ const handleDragOver = (e) => {
 }
 
 const Piece = ({piece, position}) => {
-    const {handleClick, positionFrom, handleDrag, handleDrop, positionTo} = useChess();
+    const {handleClick, positionFrom, handleDrag, handleDrop, positionTo, moves} = useChess();
     const isClicked = isEqual(position, positionFrom);
     const [drag, setDrag] = useState(false);
 
@@ -16,10 +16,11 @@ const Piece = ({piece, position}) => {
         setDrag(false)
     }, [positionTo])
 
+    const attacked = moves.includes(8 * (7 - position[0]) + position[1])
 
     return (
         <div
-            className="piece"
+            className={`piece ${attacked ? 'show-dot' : ''}`}
             style={{background: isClicked ? '#689b5f' : (position[0] + position[1]) % 2 ? '#c78443' : '#fde6bf'}}
             onClick={() => handleClick(position)}
             onDragOver={handleDragOver}

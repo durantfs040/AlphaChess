@@ -40,19 +40,3 @@ void printBoard(uint64_t board) {
     }
     cout << '\n';
 }
-
-uint64_t setOccupancy(int index, int bits, uint64_t attackMask) {
-    uint64_t occupancy = 0;
-
-    for (int i = 0; i < bits; i++) {
-        int square = getLSBIndex(attackMask);
-
-        attackMask &= ~(1ULL << square);
-
-        if (index & (1ULL << i)) {
-            occupancy |= (1ULL << square);
-        }
-    }
-
-    return occupancy;
-}

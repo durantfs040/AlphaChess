@@ -8,6 +8,7 @@ const chess = new Chess();
 const startingPositions = chess.board()
 const startingFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 
+const serverUrl = 'http://localhost:4000';
 
 const ChessContext = createContext({
     board: [],
@@ -26,6 +27,7 @@ const ChessProvider = (props) => {
     const [side, setSide] = useState('w');
     const [game, setGame] = useState('');
     const [gameOver, setGameOver] = useState('No');
+    const [moves, setMoves] = useState([]);
 
 
     const playSound = (name) => {
@@ -37,7 +39,7 @@ const ChessProvider = (props) => {
     const handleDrag = (e, position) => {
         e.dataTransfer.effectAllowed = 'move';
         const piece = board[position[0]][position[1]];
-        (piece?.color === game) && setPositionFrom(position);
+        (piece?.color === side) && setPositionFrom(position);
     }
 
     const handleDrop = (position) => {
@@ -49,7 +51,7 @@ const ChessProvider = (props) => {
         const piece = board[position[0]][position[1]]
 
         // can't click on empty square
-        if (!positionFrom.length && piece?.color !== game) return;
+        if (!positionFrom.length && piece?.color !== side) return;
         if (!positionFrom.length && !piece) return;
 
         // first click
@@ -61,6 +63,7 @@ const ChessProvider = (props) => {
         // cancel if click on same square
         if (isEqual(positionFrom, position)) {
             setPositionFrom([]);
+            setMoves([]);
             return;
         }
 
@@ -77,7 +80,6 @@ const ChessProvider = (props) => {
 
     const rematch = () => {
         chess.reset()
-
         setGame(game === 'w' ? 'b' : 'w')
         setBoard(startingPositions)
         setGameOver('No')
@@ -106,6 +108,7 @@ const ChessProvider = (props) => {
 
 
     useEffect(() => {
+        axios.get(`${serverUrl}/reset`)
         game !== '' && playSound('start')
     }, [game])
 
@@ -113,7 +116,17 @@ const ChessProvider = (props) => {
     useEffect(() => {
         // player move
         if (!positionFrom.length || !positionTo.length) return
+        setMoves([])
         try {
+            if (moves.includes(8 * (7 - positionTo[0]) + positionTo[1])) {
+                console.log('legal move');
+                axios.post(`${serverUrl}/move`, {
+                    from: 8 * (7 - positionFrom[0]) + positionFrom[1],
+                    to: 8 * (7 - positionTo[0]) + positionTo[1],
+                })
+            } else {
+                console.log('illegal move')
+            }
             const move = chess.move(toSan(positionFrom, positionTo));
             chess.isCheck() ? playSound('check') : move.captured ? playSound('capture') : playSound('move')
         } catch (err) {
@@ -127,7 +140,23 @@ const ChessProvider = (props) => {
         setSide(side === 'w' ? 'b' : 'w')
         setPositionFrom([]);
         setPositionTo([]);
-    }, [positionFrom, positionTo]);
+    }, [positionTo]);
+
+    useEffect(() => {
+        if (!positionFrom.length) return;
+
+        try {
+            axios.get(`${serverUrl}/generate`, {
+                params: {
+                    from: 8 * (7 - positionFrom[0]) + positionFrom[1]
+                }
+            }).then((res) => {
+                setMoves(res.data.moves);
+            })
+        } catch (err) {
+            console.error(err);
+        }
+    }, [positionFrom]);
 
 
     useEffect(() => {
@@ -137,29 +166,13 @@ const ChessProvider = (props) => {
         }
 
         if (chess.isDraw() || chess.isStalemate() || chess.isThreefoldRepetition()) setGameOver('Draw')
-
-        // computer move
-        if (gameOver !== 'No') return;
-        if (side === game || !game) return;
-        axios.post('http://localhost:4000/analyze', {position: chess.fen()}).then(res => {
-            const bestMove = res.data.results.split(' ')[1]
-
-            const move = chess.move(bestMove)
-            chess.isCheck() ? playSound('check') : move.captured ? playSound('capture') : playSound('move')
-
-            setHistory((prev) => [...prev, {board: chess.board(), fen: chess.fen()}])
-            setBoard(chess.board());
-            setSide(side === 'w' ? 'b' : 'w')
-        }).catch((err) => {
-            console.error(err) // remove in production
-        })
     }, [board, game])
 
 
     return (
         <ChessContext.Provider value={{
             board, setBoard, positionFrom, setPositionFrom, positionTo, setPositionTo,
-            handleClick, side, setSide, game, setGame, gameOver, rematch, handleDrop, handleDrag, handleRevert,
+            handleClick, side, setSide, game, setGame, gameOver, rematch, handleDrop, handleDrag, handleRevert, moves
         }}{...props}/>
     )
 }

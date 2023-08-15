@@ -59,10 +59,7 @@ void ChessBoard::movePiece(int from, int to) {
     int piece = mailbox[from];
     int capturedPiece = mailbox[to];
 
-
     int color = piece / 6;
-    int type = piece % 6;
-
 
     uint64_t board = pieces[piece].getBoard();
     uint64_t capturedBoard = pieces[capturedPiece].getBoard();
@@ -73,16 +70,6 @@ void ChessBoard::movePiece(int from, int to) {
 
     bool capture = toMask & allColorPieces[!color];
 
-    if (!(board & fromMask)) {
-        cout << "no piece on square" << '\n';
-        return;
-    }
-
-    if (!(moveGeneration(type, color, from, allColorPieces[White], allColorPieces[Black], allPieces) & toMask)) {
-        cout << "invalid move" << '\n';
-        return;
-    }
-
     board ^= fromToMask;
     allColorPieces[color] ^= fromToMask;
 
@@ -90,6 +77,7 @@ void ChessBoard::movePiece(int from, int to) {
         allPieces ^= fromMask;
         allColorPieces[!color] ^= toMask;
         capturedBoard ^= toMask;
+        pieces[capturedPiece].setBoard(capturedBoard);
     } else {
         allPieces ^= fromToMask;
     }
@@ -98,7 +86,6 @@ void ChessBoard::movePiece(int from, int to) {
     mailbox[from] = -1;
 
     pieces[piece].setBoard(board);
-    pieces[capturedPiece].setBoard(capturedBoard);
 }
 
 void ChessBoard::printMailBox() {
@@ -116,9 +103,48 @@ void ChessBoard::printMailBox() {
 void ChessBoard::testMoves() {
     for (int i = 0; i < 64; i++) {
         cout << "moves for " << i << '\n';
-        moveGeneration(Rook, White, i, allColorPieces[White], allColorPieces[Black], allPieces);
+        generateMoves(i);
         printMailBox();
     }
 }
 
+uint64_t ChessBoard::generateMoves(int from) {
+    int piece = mailbox[from];
+    int color = piece / 6;
+    int type = piece % 6;
+    uint64_t fromMask = 1ULL << from;
+    uint64_t validMoves = 0;
 
+    switch (type) {
+        case 0: // pawn
+            validMoves = color ? generateBlackPawnMoves(fromMask, allPieces, allColorPieces[White])
+                               : generateWhitePawnMoves(
+                            fromMask,
+                            allPieces, allColorPieces[Black]);
+            break;
+        case 1: // rook
+            validMoves = generateRookMoves(from, allPieces);
+            break;
+        case 2: // knight
+            validMoves = generateKnightMoves(fromMask);
+            break;
+        case 3: // bishop
+            validMoves = generateBishopMoves(from, allPieces);
+            break;
+        case 4: // queen
+            validMoves = generateBishopMoves(from, allPieces) | generateRookMoves(from, allPieces);
+            break;
+        case 5:
+            validMoves = generateKingMoves(fromMask);
+            break;
+        default:
+            cout << "Invalid move generation";
+            break;
+    }
+
+    validMoves &= ~(color ? allColorPieces[Black] : allColorPieces[White]);
+
+    printBoard(validMoves);
+
+    return validMoves;
+}

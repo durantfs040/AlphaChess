@@ -6,8 +6,8 @@ using namespace std;
 
 
 class ChessBoard {
-    array<int, 64> mailbox;
 public:
+    array<int, 64> mailbox;
     array<Bitboard, 12> pieces;
     array<uint64_t, 2> allColorPieces;
     uint64_t allPieces;
@@ -19,5 +19,7 @@ public:
     void printMailBox();
 
     void testMoves();
+
+    uint64_t generateMoves(int from);
 
 };

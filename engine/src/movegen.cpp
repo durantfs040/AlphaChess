@@ -171,41 +171,4 @@ uint64_t generateBishopMoves(int from, uint64_t occupied) {
 }
 
 
-uint64_t
-moveGeneration(int type, int color, int from, uint64_t whitePieces, uint64_t blackPieces, uint64_t allPieces) {
-    uint64_t fromMask = 1ULL << from;
-    uint64_t validMoves = 0;
-
-    switch (type) {
-        case 0: // pawn
-            validMoves = color ? generateBlackPawnMoves(fromMask, allPieces, whitePieces) : generateWhitePawnMoves(
-                    fromMask,
-                    allPieces, blackPieces);
-            break;
-        case 1: // rook
-            validMoves = generateRookMoves(from, allPieces);
-            break;
-        case 2: // knight
-            validMoves = generateKnightMoves(fromMask);
-            break;
-        case 3: // bishop
-            validMoves = generateBishopMoves(from, allPieces);
-            break;
-        case 4: // queen
-            validMoves = generateBishopMoves(from, allPieces) | generateRookMoves(from, allPieces);
-            break;
-        case 5:
-            validMoves = generateKingMoves(fromMask);
-            break;
-        default:
-            cout << "Invalid move generation";
-            break;
-    }
-
-    validMoves &= ~(color ? blackPieces : whitePieces);
-
-    printBoard(validMoves);
-
-    return validMoves;
-}
 
